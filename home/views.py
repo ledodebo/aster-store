@@ -1,0 +1,302 @@
+from django.shortcuts import render ,redirect
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.shortcuts import render, HttpResponse
+from django.http import HttpResponseRedirect
+from .models import product,CartItem,ProductVariation,inc
+from .forms import ProductVariationForm
+from .filters import ProductFilter
+from .forms import SignUpForm ,order
+from accounts .models import customer
+from .models import gust,order as o
+from .context_processors import items_count
+from django.shortcuts import get_object_or_404
+#________________________________________________________________________________________________________________________________________________________
+def checkout(requset):
+    form = order()
+    if requset.GET.get('number'):
+        print (requset.GET.get('number'))
+    if requset.method == "POST": 
+        form = order(requset.POST)
+        if form.is_valid():
+            if requset.user.is_authenticated:
+                form.instance.user = requset.user
+                cart_items = CartItem.objects.filter(user=requset.user)
+                print (cart_items)
+                tn_mon_list = []
+                for obj in cart_items:
+                    tn_mon_list.append(str(obj))
+                    form.instance.iteams = tn_mon_list
+                    tn = []
+                for obj in cart_items:
+                 tn.append(str(obj))
+                 form.save()
+                 return redirect ("done")
+            else:
+                device = requset.COOKIES['device']
+                form.instance.deuvice = device
+                cart_items = CartItem.objects.filter(device=device)
+                tn_mon_list = []
+                for obj in cart_items:
+                    tn_mon_list.append(str(obj))
+                    form.instance.iteams = tn_mon_list
+                    tn = []
+                for obj in cart_items:
+                    tn.append(str(obj))
+                    form.save()
+                    return redirect ("done")
+    cart_items = ()
+    if requset.user.is_authenticated:
+        cart_items = CartItem.objects.filter(user=requset.user)
+    else:
+         device = requset.COOKIES['device']
+         cart_items = CartItem.objects.filter(device=device)
+
+    r =  (item.quantity * item.product.discount for item in cart_items)
+    total_price = sum(item.product.discount * item.quantity for item in cart_items)
+    return render (requset,"html/checkout.html",{'form':form , 'cart_items': cart_items, 'total_price': total_price,"totalr":r})
+#________________________________________________________________________________________________________________________________________________________
+def register_usr(requset):
+    form = SignUpForm()
+    if requset.method == "POST": 
+        form = SignUpForm(requset.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password1"]
+            user = authenticate (username=username,password=password,)
+            login(requset,user )
+            messages.success(requset,"regstiration done succ")
+            return redirect ("home")
+        else:
+            messages.error(requset,("please Enter a Valid informaion and Try again"))
+            return redirect ("reg")
+    else:
+        return render (requset,"html/register.html",{"form":form})
+#___________________________________________________________________________________
+
+def catagory(requset):
+    
+    a = product.objects.all()
+    f = ProductFilter(requset.GET, queryset=product.objects.all())
+    #s = product.objects.filter(name__icontains="tobakco")
+    if requset.method == 'POST':
+        search_query = requset.POST['search_query']
+        return redirect('search',pk=search_query)
+    context = {"filter":f,
+               "p":a,
+                     
+               }
+    return render (requset,"html/category.html",context)
+#___________________________________________________________________________________
+def search(requset,pk):
+    if pk == "":
+        return redirect ("home")
+    f = product.objects.filter(name__icontains=pk)
+    context = {"filter":f}
+    return render (requset,"html/search.html",context)
+#___________________________________________________________________________________
+def producct(requst,pk):
+    prodcu = product.objects.get(id=pk)
+    pv = ProductVariation.objects.filter(product=prodcu)
+    
+   # colors=ProductAttribute.objects.filter(product=product).values('color__id','color__title','color__color_code').distinct()
+	#s=ProductAttribute.objects.filter(product=prodcu)
+    a = prodcu.genders
+    ge=product.objects.filter(genders=a).exclude(id=pk)[:6]
+    original_price = prodcu.price
+    discounted_price = prodcu.discount
+    def calculate_discount_percentage(original_price, discounted_price):
+           discount_amount = original_price - discounted_price
+           discount_rate = discount_amount / original_price
+           discount_percentage = discount_rate * 100
+           return discount_percentage
+    discounted =  (calculate_discount_percentage(original_price, discounted_price))
+    d = round(discounted)
+    context= {
+        'pk':prodcu,
+        'rl':ge,
+        'discount':d,
+        "pv":pv
+    }
+    return render(requst,"html/product.html",context)
+#___________________________________________________________________________________
+def index(requst):   
+    prodcu = product.objects.all()
+    offer = 0
+    message = ("شحن مجاني لاي اوردر فوق ال 1000")
+    cart = CartItem.objects.all()
+    if requst.user.is_authenticated:
+        cart_items = CartItem.objects.filter(user=requst.user)
+        total_price = sum(item.product.discount * item.quantity for item in cart_items)
+        offer = round(1000-total_price)
+        if total_price > 1:
+            offer = round(1000-total_price)
+            message = ("فاضلك "+(str(offer))+" عشان العرض يكمل")
+        if total_price >= 1000 :
+            message = ("دلوقتي ليك شحن مجاني")
+    return render(requst,"html/index.html",{'product':prodcu,
+                                            'offer':message})
+#___________________________________________________________________________________
+def login_usr(requst):
+    if requst.method == "POST":
+        username1 = requst.POST.get("username")
+        password1 = requst.POST.get("password")
+        user = authenticate(requst,username=username1,password=password1)
+        if user is not None:
+            login(requst,user)
+            messages.success(requst,("You have been logged in ..."))
+            return redirect("home")
+        else:
+            messages.success(requst,"خطا في الاسم او كلمة المرور ")
+            return redirect("login")
+    else:
+       return render(requst,"html/login.html")
+#___________________________________________________________________________________
+def logout_usr(requst):
+    logout(requst)
+    #messages.success(requst,("You have been logged out ..."))
+    return redirect ("home")
+#___________________________________________________________________________________
+def view_cart(request):
+    cart_items = ()
+    #device = request.COOKIES['device']
+    if request.user.is_authenticated:
+        cart_items = CartItem.objects.filter(user=request.user)
+    else:
+        device = request.COOKIES['device']
+        cart_items = (CartItem.objects.filter(device=device))
+       
+    total_price = sum(item.product.discount * item.quantity for item in cart_items)
+    return render(request, 'html/cart.html', {'cart_items': cart_items, 'total_price': total_price})
+ #___________________________________________________________________________________
+def add_to_cart(request):
+   pk = request.GET.get('id')
+   qty = 1
+   if request.GET.get('qty'):
+       qty = request.GET.get('qty')
+   Product = product.objects.get(id=pk)
+   if request.user.is_authenticated:
+       cart_item, created = CartItem.objects.get_or_create(product=Product, user=request.user)
+       cart_item.quantity += (int(qty))
+       cart_item.save()
+       count = items_count(request)
+      # messages.success(request,'تم اضافة المنتج بنجاح')
+       return JsonResponse ( {'items_count':count['items_count']})
+       #return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+   else :
+         devive = request.COOKIES['device']
+         costumer , create = customer.objects.get_or_create(device=devive)
+         cart_item, created = CartItem.objects.get_or_create(product=Product, device=devive)
+         cart_item.quantity += (int(qty))
+         cart_item.save()
+         count = items_count(request)
+         #messages.error(request,"من فضلك قم بتسجيل الدخول اولا")
+         return JsonResponse ( {'items_count':count['items_count']})
+#___________________________________________________________________________________
+def remove_iteam(request):
+    id = request.GET.get("id")
+    Product = product.objects.get(id=id)
+    if request.user.is_authenticated:
+         cart_item, created = CartItem.objects.get_or_create(product=Product, user=request.user)
+         if cart_item.quantity == 1:
+            cart_item.delete()
+            return JsonResponse ( {'items_count':cart_item.quantity})
+         else:
+          cart_item.quantity -= 1
+          cart_item.save()
+          return JsonResponse ( {'items_count':cart_item.quantity})
+         
+    else:
+         device = request.COOKIES['device']
+         cart_item, created = CartItem.objects.get_or_create(product=Product, device=device)
+         if cart_item.quantity == 1:
+            cart_item.delete()
+            return JsonResponse ( {'items_count':cart_item.quantity})
+         else:
+          cart_item.quantity -= 1
+          cart_item.save()
+          return JsonResponse ( {'items_count':cart_item.quantity})
+#___________________________________________________________________________________
+
+def add_iteam(request):
+    if request.user.is_authenticated:
+        id = request.GET.get("id")
+        Product = product.objects.get(id=id)
+        cart_item, created = CartItem.objects.get_or_create(product=Product, user=request.user)
+        cart_item.quantity += 1 
+        cart_item.save()
+        return JsonResponse ( {'items_count':cart_item.quantity})
+    
+    else:
+        device = request.COOKIES['device']
+        id = request.GET.get("id")
+        Product = product.objects.get(id=id)
+        cart_item, created = CartItem.objects.get_or_create(product=Product, device=device)
+        cart_item.quantity += 1 
+        cart_item.save()
+        return JsonResponse ( {'items_count':cart_item.quantity})
+#___________________________________________________________________________________
+
+def delete_cart_item(request):
+  if request.method == 'GET':
+        try:
+            cart_item_id = request.GET.get('cart_item_id')
+            cart_item = get_object_or_404(CartItem, id=cart_item_id)
+            cart_item.delete()
+            count = items_count(request)
+            return JsonResponse({'success': True,'items_count':count['items_count']})
+        except CartItem.DoesNotExist:
+            return JsonResponse({'error': 'CartItem does not exist'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+  else:
+      return JsonResponse({'error': 'Invalid request method'}, status=405)
+#___________________________________________________________________________________
+def order_placed(request):
+     return render(request,'html/order_placed.html')
+def google(request):
+    return HttpResponseRedirect("https://www.facebook.com/waled.diab.779/")
+from django.http import JsonResponse
+
+def innc(requset):
+    if requset.GET.get("phone"):
+        number = (int(requset.GET.get("phone")))
+        inc.objects.get_or_create(phone=number, user=requset.user)
+        return JsonResponse ( {'items_count':number})
+    
+    else:
+        return JsonResponse ( {'items_count':cart_item.quantity,'items_count':number})
+    
+def product_detail(request, product_id):
+    product = get_object_or_404(product, pk=product_id)
+    form = ProductVariationForm(product_id=product_id)
+
+    if request.method == 'POST':
+        form = ProductVariationForm(request.POST, product_id=product_id)
+        if form.is_valid():
+            size = form.cleaned_data['size']
+            kind = form.cleaned_data['kind']
+            variation = ProductVariation.objects.get(product=product, size=size, kind=kind)
+            price = variation.price
+            return render(request, 'product_detail.html', {'product': product, 'form': form, 'price': price})
+    return render(request, 'product_detail.html', {'product': product, 'form': form})
+
+
+def checkrn(request,pk):
+    prodcu = product.objects.get(id=pk)
+
+    if request.user.is_authenticated:
+        cart_item, created = CartItem.objects.get_or_create(product=prodcu, user=request.user)
+        cart_item.quantity += 1 
+        cart_item.save()
+        return redirect ("check")
+    else:
+         device = request.COOKIES['device']
+         cart_item, created = CartItem.objects.get_or_create(product=prodcu, device=device)
+         cart_item.quantity += 1 
+         cart_item.save()
+         return redirect ("check")
+

@@ -1,0 +1,193 @@
+{% load static %}
+{% load thumbnail %}
+<!DOCTYPE html>
+<html lang="en">
+<head><style>
+	@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+	</style>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Aroma Shop - Product Details</title>
+	<link rel="icon" href="img/Fevicon.png" type="image/png">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'vendors/bootstrap/bootstrap.min.css'%}">
+  <link rel="stylesheet" href="{% static 'vendors/fontawesome/css/all.min.css'%}">
+	<link rel="stylesheet" href="{% static 'vendors/themify-icons/themify-icons.css'%}">
+	<link rel="stylesheet" href="{% static 'vendors/linericon/style.css'%}">
+  <link rel="stylesheet" href="{% static 'vendors/nice-select/nice-select.css'%}">
+  <link rel="stylesheet" href="vendors/owl-carousel/owl.theme.default.min.css">
+  <link rel="stylesheet" href="vendors/owl-carousel/owl.carousel.min.css">
+ 
+  <link rel="stylesheet" href="{% static 'css/style.css'%}">
+</head>
+<body>
+	<!--================ Start Header Menu Area =================-->
+	 {% include "parts/navbar.html" %}
+	<!--================ End Header Menu Area =================-->
+	
+  <!--================Single Product Area =================-->
+ 
+	<div class="product_image_area">
+		
+		<div class="container">
+			
+			<div class="row s_product_inner">
+				<div class="col-lg-6">
+					
+						<div class="single-prd-item">
+							<img class="img-fluid" src="{{pk.image.url}}" alt="">
+						</div>
+						<!-- <div class="single-prd-item">
+							<img class="img-fluid" src="img/category/s-p1.jpg" alt="">
+						</div>
+						<div class="single-prd-item">
+							<img class="img-fluid" src="img/category/s-p1.jpg" alt="">
+						</div> -->
+				</div>
+				
+				<div class="col-lg-5 offset-lg-1">
+					<div class="s_product_text">
+						<h3 id="name" >{{pk.name}}</h3>
+						<h2 >{{pk.discount}}EGP {{discount}}%-OFF</h2>
+						<h3 style="text-decoration: line-through;" >{{pk.price}}EGP</h3>
+						<ul class="list">
+							<li><a class="active" href="#"><span>Size</span> : {{pk.size}}</a></li>
+							<li><a class="active" href="#"><span>Category</span> : {{pk.catagory}}</a></li>
+							<li><a href="#"><span>Availibility</span> : In Stock</a></li>
+						</ul>
+						<p>{{pk.descretion}}</p>
+						
+						  {% for i in pv %}
+						  <div class="card" style="margin-top: 10px;">
+							<div class="card-body" style="border: 0.5px solid; border-color: #693a86;text-align: center;font-size: 15px;color: black;">
+							<span style="color: black;">size:</span> {{i.size}}
+							<span style="color: black;">type:</span> {{i.kind}}
+							</div>
+						  </div>
+						  
+						  {% endfor %}
+						  <div data-mdb-input-init class="form-outline"  style="width: 8rem;display: flex;margin-top: 5px;"> 
+							<label class="form-label" style="margin-top: 8px;text-align: center;font-size: 15px;" id="qty" for="form1">quantity:</label>
+							<div  style="height: 32px;" class="">
+								&nbsp; &nbsp; &nbsp; </div>
+							<input type="number" id="form1" value="1" class="form-control form-icon-trailing" />
+						</div>
+						<a class="btn" style="margin-top: 10px;margin-bottom: 10px;color: white;" id="add-to-cart" >اضف الي السلة</a>   
+						<a class="btn" href="{% url 'checkrn' pk.id %}" style="margin-top: 10px;margin-bottom: 10px;color: white;background-color:black;" id="add-to-cart" >اشتري دلوقتي</a>   
+							          
+						</div>
+						<span id="id" style="color: white;">{{pk.id}}</span>
+						
+						  
+				</div>
+				
+				
+			</div>
+		</div>
+	</div>
+	<!--================End Single Product Area =================-->
+	
+	<!--================Product Description Area =================-->
+	<section class="product_description_area">
+		<div class="container">
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Description</a>
+				</li>	
+			</ul>
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+					<p>{{pk.descretion}}</p>
+					
+				</div>
+				
+				</div>
+			
+				
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--================End Product Description Area =================-->
+
+	<!--================ Start related Product area =================-->  
+	{% for i in rl %}	
+	<section class="related-product-area section-margin--small mt-0">
+		<div class="container">
+			<div class="section-intro pb-60px">
+        <p>Popular Item in the market</p>
+        <h2>Top <span class="section-intro__style">Product</span></h2>
+      </div>
+			<div class="row mt-30">
+        <div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
+          <div class="single-search-product-wrapper">
+            <div class="single-search-product d-flex">
+              <a href="#"><img src="{{i.image.url}}"alt=""></a>
+              <div class="desc">
+                  <a href="#" id="name" class="title">{{i.name}}</a>
+                  <div class="price">{{i.discount}}EGP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+		</div>
+	</section>
+	{% endfor %}
+	<!--================ end related Product area =================-->  	
+  <!--================ Start footer Area  =================-->	
+	 {% include "parts/footer.html" %}
+	<!--================ End footer Area  =================-->
+	
+  <script src="{% static 'vendors/jquery/jquery-3.2.1.min.js'%}"></script>
+  <script src="{% static 'vendors/bootstrap/bootstrap.bundle.min.js'%}"></script>
+  <script src="{% static 'vendors/skrollr.min.js'%}"></script>
+  <script src="{% static 'vendors/owl-carousel/owl.carousel.min.js'%}"></script>
+  <script src="{% static 'vendors/nice-select/jquery.nice-select.min.js'%}"></script>
+  <script src="{% static 'vendors/jquery.ajaxchimp.min.js'%}"></script>
+  <script src="{% static 'vendors/mail-script.js'%}"></script>
+  <script src="{% static 'js/main.js'%}"></script>
+
+  <script>
+	$("#add-to-cart").on('click',function(){
+		let qty  = $("#form1").val()
+		let id = $("#id").text()
+		let this_b = $(this)
+		let iteam_count = $('#count')
+		console.log("id",id);
+		console.log("qty",qty);
+		console.log("count",iteam_count);
+		$.ajax({
+			url : "add/",
+			data:{
+				'id' : id,
+				'qty' : qty,
+			},
+			dataType:'json',
+			success : function(response){
+				this_b.html("item added");
+				iteam_count.text(response.items_count)
+				Toastify({
+  text: "Iteam Was Added",
+  duration: 2000,
+  newWindow: false,
+  close: true,
+  gravity: "bottom", // `top` or `bottom`
+  position: "center", // `left`, `center` or `right`
+  stopOnFocus: true, // Prevents dismissing of toast on hover
+  style: {
+    background: "#693a86",
+  },
+  onClick: function(){} // Callback after click
+}).showToast();
+			}
+
+		})
+	}); 
+  </script>
+</body>
+</html>
