@@ -41,51 +41,39 @@
 						<div class="single-prd-item">
 							<img class="img-fluid" src="{{pk.image.url}}" alt="">
 						</div>
-						<!-- <div class="single-prd-item">
-							<img class="img-fluid" src="img/category/s-p1.jpg" alt="">
-						</div>
-						<div class="single-prd-item">
-							<img class="img-fluid" src="img/category/s-p1.jpg" alt="">
-						</div> -->
+						</div> 
 				</div>
-				
 				<div class="col-lg-5 offset-lg-1">
+					{% for i in ch %}
 					<div class="s_product_text">
 						<h3 id="name" >{{pk.name}}</h3>
-						<h2 >{{pk.discount}}EGP {{discount}}%-OFF</h2>
-						<h3 style="text-decoration: line-through;" >{{pk.price}}EGP</h3>
+						<h2 id="price" >{{i.discount}}EGP{{discount}}%-OFF</h2>
+						<h3 style="text-decoration: line-through;"  >{{i.price}}EGP</h3>
 						<ul class="list">
-							<li><a class="active" href="#"><span>Size</span> : {{pk.size}}</a></li>
-							<li><a class="active" href="#"><span>Category</span> : {{pk.catagory}}</a></li>
+							<li><a class="active" href="#"><span>Size</span> : {{i.size}}</a></li>
+							<li><a class="active" href="#"><span>Category</span> : {{i.Category}}</a></li>
 							<li><a href="#"><span>Availibility</span> : In Stock</a></li>
 						</ul>
-						<p>{{pk.descretion}}</p>
-						
-						  {% for i in pv %}
-						  <div class="card" style="margin-top: 10px;">
-							<div class="card-body" style="border: 0.5px solid; border-color: #693a86;text-align: center;font-size: 15px;color: black;">
-							<span style="color: black;">size:</span> {{i.size}}
-							<span style="color: black;">type:</span> {{i.kind}}
-							</div>
-						  </div>
-						  
-						  {% endfor %}
-						  <div data-mdb-input-init class="form-outline"  style="width: 8rem;display: flex;margin-top: 5px;"> 
+						<div data-mdb-input-init class="form-outline"  style="width: 8rem;display: flex;margin-top: 5px;"> 
 							<label class="form-label" style="margin-top: 8px;text-align: center;font-size: 15px;" id="qty" for="form1">quantity:</label>
 							<div  style="height: 32px;" class="">
 								&nbsp; &nbsp; &nbsp; </div>
 							<input type="number" id="form1" value="1" class="form-control form-icon-trailing" />
 						</div>
+						<p>{{pk.descretion}}</p>
+						{% endfor %}
+						  {% for i in pv %}
+						  <div class="card" style="margin-top: 10px;">
+							<div class="card-body" style="border: 0.5px solid; border-color: #693a86;text-align: center;font-size: 15px;color: black;">
+							<input class="form-check-input" {{i.ava}} type="radio" name="type"  value="{{i.id}}" id=""><span style="color: black;"> size: </span> {{i.size}}<span style="color: black;"> type: </span> {{i.type}}
+							</div>
+						  </div>
+						  {% endfor %}
 						<a class="btn" style="margin-top: 10px;margin-bottom: 10px;color: white;" id="add-to-cart" >اضف الي السلة</a>   
-						<a class="btn" href="{% url 'checkrn' pk.id %}" style="margin-top: 10px;margin-bottom: 10px;color: white;background-color:black;" id="add-to-cart" >اشتري دلوقتي</a>   
-							          
+						<a class="btn" href="{% url 'checkrn' pk.id %}" style="margin-top: 10px;margin-bottom: 10px;color: white;background-color:black;" id="add-to-cart" >اشتري دلوقتي</a>   	          
 						</div>
-						<span id="id" style="color: white;">{{pk.id}}</span>
-						
-						  
+						<span  style="color: white;">{{pk.id}}</span>		  
 				</div>
-				
-				
 			</div>
 		</div>
 	</div>
@@ -102,12 +90,9 @@
 			<div class="tab-content" id="myTabContent">
 				<div class="tab-pane fade fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
 					<p>{{pk.descretion}}</p>
-					
+
 				</div>
-				
 				</div>
-			
-				
 				</div>
 			</div>
 		</div>
@@ -153,41 +138,84 @@
   <script src="{% static 'js/main.js'%}"></script>
 
   <script>
-	$("#add-to-cart").on('click',function(){
-		let qty  = $("#form1").val()
-		let id = $("#id").text()
-		let this_b = $(this)
-		let iteam_count = $('#count')
-		console.log("id",id);
-		console.log("qty",qty);
-		console.log("count",iteam_count);
-		$.ajax({
-			url : "add/",
-			data:{
-				'id' : id,
-				'qty' : qty,
-			},
-			dataType:'json',
-			success : function(response){
-				this_b.html("item added");
-				iteam_count.text(response.items_count)
-				Toastify({
-  text: "Iteam Was Added",
-  duration: 2000,
-  newWindow: false,
-  close: true,
-  gravity: "bottom", // `top` or `bottom`
-  position: "center", // `left`, `center` or `right`
-  stopOnFocus: true, // Prevents dismissing of toast on hover
-  style: {
-    background: "#693a86",
-  },
-  onClick: function(){} // Callback after click
-}).showToast();
-			}
+	document.addEventListener('DOMContentLoaded', () => {
+    const radioButtons = document.querySelectorAll('input[type="radio"][name="type"]');
+    const pp = $('#price');
+    const addToCartButton = $("#add-to-cart");
+    const itemCount = $('#count');
 
-		})
-	}); 
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', () => {
+            const checkedOption = Array.from(radioButtons).find(radio => radio.checked);
+            if (checkedOption) {
+                console.log(`Checked: ${checkedOption.value}`);
+                const id = checkedOption.value;
+
+                $.ajax({
+                    url: "{% url 'getprice' %}",
+                    data: {
+                        'id': id,
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response.price);
+                        pp.text(response.price + "EGP");
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching price:", error);
+                    }
+                });
+            } else {
+                console.log('');
+            }
+        });
+    });
+
+    // Bind the click event for the "add-to-cart" button once
+    addToCartButton.on('click', function() {
+        const checkedOption = Array.from(radioButtons).find(radio => radio.checked);
+        if (checkedOption) {
+            const id = checkedOption.value;
+            const qty = $("#form1").val();
+            const thisButton = $(this);
+
+            console.log("id", id);
+            console.log("qty", qty);
+            console.log("count", itemCount);
+
+            $.ajax({
+                url: "add/",
+                data: {
+                    'id': id,
+                    'qty': qty,
+                },
+                dataType: 'json',
+                success: function(response) {
+                    thisButton.html("Item added");
+                    itemCount.text(response.items_count);
+                    Toastify({
+                        text: "Item Was Added",
+                        duration: 2000,
+                        newWindow: false,
+                        close: true,
+                        gravity: "bottom", // `top` or `bottom`
+                        position: "center", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "#693a86",
+                        },
+                        onClick: function(){} // Callback after click
+                    }).showToast();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error adding item:", error);
+                }
+            });
+        } else {
+            console.log("No option selected");
+        }
+    });
+});
   </script>
 </body>
 </html>

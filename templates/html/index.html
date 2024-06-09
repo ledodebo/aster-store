@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
   <link rel="stylesheet" href="{% static 'vendors/bootstrap/bootstrap.min.css'%}">
-  <link rel="stylesheet" href="{% static 'vendors/fontawesome/css/all.min.css'%}">
+ 
 	<link rel="stylesheet" href="{% static 'vendors/themify-icons/themify-icons.css'%}">
   <link rel="stylesheet" href="{% static 'vendors/nice-select/nice-select.css' %}">
   <link rel="stylesheet" href="{% static 'vendors/owl-carousel/owl.theme.default.min.css'%}">
@@ -120,14 +120,14 @@
           <div class="col-md-6 col-lg-4 col-xl-2">
             <div class="card text-center card-product">
               <div class="card-product__img">
-                <img class="card-img" style="width: 9rem;" src="{{i.image.url}}" alt="">
+                <img class="card-img" style="width: 9rem;" src="{{i.product.image.url}}" alt="">
                 <ul class="card-product__imgOverlay">
                   <a ><li ><button type="button" data-index="{{i.id}}" class="add-to-cart "><i  id="id-{{i.id}}" class="ti-shopping-cart  added">Add to Cart </i></button></li></a>
                 </ul>
               </div>
               <div class="card-body">
-                <p>{{i.catagory}}</p>
-                <h4 class="card-product__title"><a id="name" href="{% url 'products' i.id  %}">{{i.name}}</a></h4>
+                <p>{{i.product.catagory}}</p>
+                <h4 class="card-product__title"><a id="name" href="{% url 'products' i.product.id  %}">{{i.product.name}}</a></h4>
                 <p class="card-product__price">{{i.discount}}EGP</p>
                 <p style="text-decoration: line-through;font-size: 15px;"  class="card-product__price">{{i.price}}EGP</p>
               </div>
@@ -163,14 +163,14 @@
           {% for i in product %}
           <div class="card text-center card-product">
             <div class="card-product__img">
-              <img class="img-fluid" style="width: 24rem;" src="{{i.image.url}}" alt="">
+              <img class="img-fluid" style="width: 24rem;" src="{{i.product.image.url}}" alt="">
               <ul class="card-product__imgOverlay">
                 <a ><li ><button type="button" data-index="{{i.id}}" class="add-to-cart "><i  id="id-{{i.id}}" class="ti-shopping-cart  added">Add to Cart </i></button></li></a>
               </ul>
             </div>
             <div class="card-body">
-              <p>{{i.catagory}}</p>
-              <h4 class="card-product__title"><a id="name" href="{% url 'products' i.id  %}">{{i.name}}</a></h4>
+              <p>{{i.product.catagory}}</p>
+              <h4 class="card-product__title"><a id="name" href="{% url 'products' i.product.id  %}">{{i.product.name}}</a></h4>
               <p class="card-product__price">{{i.discount}}EGP</p>
               <p class="card-product__price"  style="text-decoration: line-through;">{{i.price}}EGP</p>
             </div>

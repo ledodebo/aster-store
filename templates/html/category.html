@@ -84,7 +84,6 @@
           <!-- Start Best Seller -->
           <section class=" ">
             &nbsp;
-            
             <div class="row">
               {% for i in filter.qs  %}
               &nbsp;
@@ -94,7 +93,7 @@
 
                 <div class="card text-center card-product">
                   <div class="card-product__img">
-                    <img class="card-img"   style="width: 9rem;" src="{{i.image.url}}" alt="">
+                    <img class="card-img"   style="width: 9rem;" src="{{i.product.image.url}}" alt="">
                     <ul class="card-product__imgOverlay">
                     
                       <a ><li ><button type="button" data-index="{{i.id}}" class="add-to-cart "><i  id="id-{{i.id}}" class="ti-shopping-cart  added">Add to Cart </i></button></li></a>
@@ -102,7 +101,7 @@
                   </div>
                   <div class="card-body">
                     <p>{{i.catagory}}</p>
-                    <h4 class="card-product__title"><a id="name" href="{% url 'products' i.id  %}">{{i.name | truncatewords:2  }}</a></h4>
+                    <h4 class="card-product__title"><a id="name" href="{% url 'products' i.product.id  %}">{{i.product.name | truncatewords:2  }}</a></h4>
                     <p class="card-product__price">{{i.discount}}EGP</p>
                       <p style="text-decoration: line-through;font-size: 15px;"  class="card-product__price">{{i.price}}EGP</p>
                   </div>

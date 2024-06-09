@@ -86,15 +86,3 @@ class order(ModelForm):
 
 
 
-from .models import ProductVariation
-
-class ProductVariationForm(forms.ModelForm):
-    class Meta:
-        model = ProductVariation
-        fields = ['size', 'kind']
-
-    def __init__(self, *args, **kwargs):
-        product_id = kwargs.pop('product_id')
-        super().__init__(*args, **kwargs)
-        self.fields['size'].queryset = ProductVariation.objects.filter(product_id=product_id).values_list('size', flat=True).distinct()
-        self.fields['kind'].queryset = ProductVariation.objects.filter(product_id=product_id).values_list('kind', flat=True).distinct()

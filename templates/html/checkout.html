@@ -10,7 +10,7 @@
 	<link rel="icon" href="img/Fevicon.png" type="image/png">
   <link rel="icon" href="{% static 'imgs/logo.png'%}" type="image/png">
   <link rel="stylesheet" href="{% static 'vendors/bootstrap/bootstrap.min.css'%}">
-  <link rel="stylesheet" href="{% static  'vendors/fontawesome/css/all.min.css'%}">
+
   <link rel="stylesheet" href="{% static 'vendors/themify-icons/themify-icons.css'%}">
   <link rel="stylesheet" href="{% static 'vendors/linericon/style.css'%}">
   <link rel="stylesheet" href="{% static 'vendors/owl-carousel/owl.theme.default.min.css'%}">
@@ -93,7 +93,7 @@
                         {% for item in cart_items %}
                         <ul class="list">
                         
-                            <li><a href="#">{{item.product.name |truncatewords:2  }}<span class="middle">x{{ item.quantity  }} </span> <span class="last"> {% widthratio item.quantity  1 item.product.discount %}</span></a></li>
+                            <li><a href="#">{{item.ProductVariation|truncatewords:2  }}<span class="middle">x{{ item.quantity  }} </span> <span class="last"> {% widthratio item.quantity  1 item.ProductVariation.discount %}</span></a></li>
                         </ul>
                          {% endfor %}
                         <ul class="list list_2">

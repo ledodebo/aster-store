@@ -1,11 +1,11 @@
 
-from .models import CartItem
+from .models import CartItem,ProductVariation
 def items_count(requset):
    if requset.user.is_authenticated:
       a = CartItem.objects.filter(user=requset.user).count()
       message = ("شحن مجاني لاي اوردر فوق ال 1000")
       cart_items = CartItem.objects.filter(user=requset.user)
-      total_price = sum(item.product.discount * item.quantity for item in cart_items)
+      total_price = sum(item.ProductVariation.discount * item.quantity for item in cart_items)
       offer = round(1000-total_price)
       if total_price > 1:
          offer = round(1000-total_price)
@@ -20,7 +20,7 @@ def items_count(requset):
        a = CartItem.objects.filter(device=device).count()
        message = ("شحن مجاني لاي اوردر فوق ال 1000")
        cart_items = CartItem.objects.filter(device=device)
-       total_price = sum(item.product.discount * item.quantity for item in cart_items)
+       total_price = sum(item.ProductVariation.discount * item.quantity for item in cart_items)
        offer = round(1000-total_price)
        if total_price > 1:
          offer = round(1000-total_price)

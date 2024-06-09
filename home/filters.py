@@ -1,12 +1,12 @@
-from .models import product
+from .models import product,ProductVariation
 import django_filters
 
 
 class ProductFilter(django_filters.FilterSet):
     class Meta:
-        model = product
+        model = (ProductVariation)
         fields = '__all__'
-        exclude = ["image","ava","descretion","name","discount","size","price"]
+        exclude = ["ava","name","discount","price","product"]
 
 
 """    

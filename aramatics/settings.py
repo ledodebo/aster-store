@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+
+
+import dj_database_url
 import django_heroku
-import dj
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,16 +28,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1w7rh-zljxt8v(8yc^-1%et=4$4v&ro%l!qafh&sn6x68pu69('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
      'accounts',
-     #'jazzmin',
+     'jazzmin',
      'sorl.thumbnail',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
    
     
 ]
@@ -281,7 +284,6 @@ STATIC_ROOT = os.path.join(BASE_DIR,"static")
 STATICFILES_DIRS= [
     os.path.join(BASE_DIR,"aramatics/static")
 
-
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR,"media")
@@ -289,8 +291,12 @@ MEDIA_URL = '/media/'
 MEDIAFILES_DIRS= [
     os.path.join(BASE_DIR,"aramatics/media")
 
-
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 django_heroku.settings(locals())
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

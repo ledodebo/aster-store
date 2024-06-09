@@ -26,5 +26,6 @@ urlpatterns = [
     path('order_placed_successfully /', views.order_placed,name="done"),
     path('search/<str:pk>', views.search,name="search"),
     path('checkrn/<int:pk>', views.checkrn,name="checkrn"),
+    path('/getprice/', views.getprice,name="getprice"),
     
 ]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

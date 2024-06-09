@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.shortcuts import render, HttpResponse
 from django.http import HttpResponseRedirect
 from .models import product,CartItem,ProductVariation,inc
-from .forms import ProductVariationForm
+
 from .filters import ProductFilter
 from .forms import SignUpForm ,order
 from accounts .models import customer
@@ -54,7 +54,7 @@ def checkout(requset):
          cart_items = CartItem.objects.filter(device=device)
 
     r =  (item.quantity * item.product.discount for item in cart_items)
-    total_price = sum(item.product.discount * item.quantity for item in cart_items)
+    total_price = sum(item.ProductVariation.discount * item.quantity for item in cart_items)
     return render (requset,"html/checkout.html",{'form':form , 'cart_items': cart_items, 'total_price': total_price,"totalr":r})
 #________________________________________________________________________________________________________________________________________________________
 def register_usr(requset):
@@ -77,9 +77,8 @@ def register_usr(requset):
 #___________________________________________________________________________________
 
 def catagory(requset):
-    
-    a = product.objects.all()
-    f = ProductFilter(requset.GET, queryset=product.objects.all())
+    a = ProductVariation.objects.filter(ava=True)
+    f = ProductFilter(requset.GET, queryset=a)
     #s = product.objects.filter(name__icontains="tobakco")
     if requset.method == 'POST':
         search_query = requset.POST['search_query']
@@ -89,6 +88,7 @@ def catagory(requset):
                      
                }
     return render (requset,"html/category.html",context)
+
 #___________________________________________________________________________________
 def search(requset,pk):
     if pk == "":
@@ -99,14 +99,13 @@ def search(requset,pk):
 #___________________________________________________________________________________
 def producct(requst,pk):
     prodcu = product.objects.get(id=pk)
+    ts = ProductVariation.objects.get(product=prodcu,ava=True)
     pv = ProductVariation.objects.filter(product=prodcu)
-    
-   # colors=ProductAttribute.objects.filter(product=product).values('color__id','color__title','color__color_code').distinct()
-	#s=ProductAttribute.objects.filter(product=prodcu)
-    a = prodcu.genders
-    ge=product.objects.filter(genders=a).exclude(id=pk)[:6]
-    original_price = prodcu.price
-    discounted_price = prodcu.discount
+    ch = ProductVariation.objects.filter(product=prodcu,ava=True)
+    a = (ts.genders)
+    ge=ProductVariation.objects.filter(genders=a).exclude(id=pk)[:6]
+    original_price = ts.price
+    discounted_price = ts.discount
     def calculate_discount_percentage(original_price, discounted_price):
            discount_amount = original_price - discounted_price
            discount_rate = discount_amount / original_price
@@ -118,18 +117,20 @@ def producct(requst,pk):
         'pk':prodcu,
         'rl':ge,
         'discount':d,
-        "pv":pv
+        "pv":pv,
+        "ch":ch
     }
     return render(requst,"html/product.html",context)
 #___________________________________________________________________________________
 def index(requst):   
-    prodcu = product.objects.all()
+    prodcu = ProductVariation.objects.filter(ava=True)
+    print (prodcu)
     offer = 0
     message = ("شحن مجاني لاي اوردر فوق ال 1000")
     cart = CartItem.objects.all()
     if requst.user.is_authenticated:
         cart_items = CartItem.objects.filter(user=requst.user)
-        total_price = sum(item.product.discount * item.quantity for item in cart_items)
+        total_price = sum(item.ProductVariation.discount * item.quantity for item in cart_items)
         offer = round(1000-total_price)
         if total_price > 1:
             offer = round(1000-total_price)
@@ -168,7 +169,7 @@ def view_cart(request):
         device = request.COOKIES['device']
         cart_items = (CartItem.objects.filter(device=device))
        
-    total_price = sum(item.product.discount * item.quantity for item in cart_items)
+    total_price = sum(item.ProductVariation.discount * item.quantity for item in cart_items)
     return render(request, 'html/cart.html', {'cart_items': cart_items, 'total_price': total_price})
  #___________________________________________________________________________________
 def add_to_cart(request):
@@ -176,9 +177,9 @@ def add_to_cart(request):
    qty = 1
    if request.GET.get('qty'):
        qty = request.GET.get('qty')
-   Product = product.objects.get(id=pk)
+   Product = ProductVariation.objects.get(id=pk)
    if request.user.is_authenticated:
-       cart_item, created = CartItem.objects.get_or_create(product=Product, user=request.user)
+       cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, user=request.user)
        cart_item.quantity += (int(qty))
        cart_item.save()
        count = items_count(request)
@@ -198,9 +199,9 @@ def add_to_cart(request):
 #___________________________________________________________________________________
 def remove_iteam(request):
     id = request.GET.get("id")
-    Product = product.objects.get(id=id)
+    Product = ProductVariation.objects.get(id=id)
     if request.user.is_authenticated:
-         cart_item, created = CartItem.objects.get_or_create(product=Product, user=request.user)
+         cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, user=request.user)
          if cart_item.quantity == 1:
             cart_item.delete()
             return JsonResponse ( {'items_count':cart_item.quantity})
@@ -224,8 +225,8 @@ def remove_iteam(request):
 def add_iteam(request):
     if request.user.is_authenticated:
         id = request.GET.get("id")
-        Product = product.objects.get(id=id)
-        cart_item, created = CartItem.objects.get_or_create(product=Product, user=request.user)
+        Product = ProductVariation.objects.get(id=id)
+        cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, user=request.user)
         cart_item.quantity += 1 
         cart_item.save()
         return JsonResponse ( {'items_count':cart_item.quantity})
@@ -233,11 +234,11 @@ def add_iteam(request):
     else:
         device = request.COOKIES['device']
         id = request.GET.get("id")
-        Product = product.objects.get(id=id)
-        cart_item, created = CartItem.objects.get_or_create(product=Product, device=device)
+        Product = ProductVariation.objects.get(id=id)
+        cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, user=request.user)
         cart_item.quantity += 1 
         cart_item.save()
-        return JsonResponse ( {'items_count':cart_item.quantity})
+        return JsonResponse ( {'ittems_count':cart_item.quantity})
 #___________________________________________________________________________________
 
 def delete_cart_item(request):
@@ -269,34 +270,27 @@ def innc(requset):
     
     else:
         return JsonResponse ( {'items_count':cart_item.quantity,'items_count':number})
-    
-def product_detail(request, product_id):
-    product = get_object_or_404(product, pk=product_id)
-    form = ProductVariationForm(product_id=product_id)
-
-    if request.method == 'POST':
-        form = ProductVariationForm(request.POST, product_id=product_id)
-        if form.is_valid():
-            size = form.cleaned_data['size']
-            kind = form.cleaned_data['kind']
-            variation = ProductVariation.objects.get(product=product, size=size, kind=kind)
-            price = variation.price
-            return render(request, 'product_detail.html', {'product': product, 'form': form, 'price': price})
-    return render(request, 'product_detail.html', {'product': product, 'form': form})
-
-
+#___________________________________________________________________________________
 def checkrn(request,pk):
-    prodcu = product.objects.get(id=pk)
-
+    prodcu = ProductVariation.objects.get(id=pk)
     if request.user.is_authenticated:
-        cart_item, created = CartItem.objects.get_or_create(product=prodcu, user=request.user)
+        cart_item, created = CartItem.objects.get_or_create(ProductVariation=prodcu, user=request.user)
         cart_item.quantity += 1 
         cart_item.save()
         return redirect ("check")
     else:
          device = request.COOKIES['device']
-         cart_item, created = CartItem.objects.get_or_create(product=prodcu, device=device)
+         cart_item, created = CartItem.objects.get_or_create(ProductVariation=prodcu, device=device)
          cart_item.quantity += 1 
          cart_item.save()
          return redirect ("check")
-
+#___________________________________________________________________________________
+def getprice(requset):
+    if requset.GET.get("id"):
+        id  = (requset.GET.get("id"))
+        pv = ProductVariation.objects.get(id=id)
+        price = pv.discount
+        return JsonResponse ( {'price':price})
+    
+    else:
+        return JsonResponse ( {'items_count':cart_item.quantity,'items_count':number})
