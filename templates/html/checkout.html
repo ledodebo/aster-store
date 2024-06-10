@@ -54,33 +54,33 @@
                     <form  method="post"> 
                         {% csrf_token %} 
                         <div class="form-group">
-                            <div class="form-group col-md-5">
-                              <label for="inputEmail4">Name</label>
-                              {% render_field form.name placeholder="Name" class="form-control" %}
-                            </div>
+                           
+                              <label for="inputEmail4">الاسم</label>
+                              {% render_field form.name placeholder="الاسم" style="width:100%" class="form-control" %}
+                            
                           </div>
                         <div class="form-group">
-                            <label for="inputAddress">Address</label>
-                            {% render_field form.adress placeholder="adress" class="form-control" %}
+                            <label for="inputAddress">العنوان</label>
+                            {% render_field form.adress placeholder="العنوان بالتفصيل" class="form-control" %}
                           </div>
                         <div class="form-row">
                           <div class="form-group col-md-6">
-                            <label for="inputEmail4">Email</label>
-                            {% render_field form.email placeholder="email" class="form-control" %}
+                            <label for="inputEmail4">الايميل</label>
+                            {% render_field form.email placeholder="الايميل" class="form-control" %}
                           </div>   
                         </div>
                         <div class="form-group">
-                            <label for="inputAddress">phone number</label>
-                            {% render_field form.phone placeholder="phone number" onchange="handleChange(event)" id="phone" class="form-control" %}
+                            <label for="inputAddress">رقم الهاتف</label>
+                            {% render_field form.phone placeholder="رقم الهاتف" onchange="handleChange(event)" id="phone" class="form-control" %}
                           </div>
                         <div class="form-row">
                           <div class="form-group col-md-6">
-                            <label for="inputCity">City</label>
-                            <input type="text" class="form-control" id="inputCity">
+                            <label for="inputCity">المنقطة/الحي</label>
+                            <input type="text" placeholder="المحافظة"  class="form-control" id="inputCity">
                           </div>
                           <div class="form-group col-md-2">
-                            <label for="inputState">State</label>
-                            {% render_field form.zones placeholder="Name" class="form-group" %}
+                            <label for="inputState">المحافظة</label><br>
+                            {% render_field form.zones placeholder="المحافظة" class="form-group" %}
                           </div> 
                         </div>                         
                      <button type="submit" class="button button-paypal">Proceed to Paypal</button>
@@ -88,6 +88,8 @@
                         
                 </div>
                 <div class="col-lg-4">
+                  &nbsp;
+                  &nbsp;
                     <div class="order_box">
                         <h2>Your Order</h2>
                         {% for item in cart_items %}
