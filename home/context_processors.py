@@ -14,9 +14,11 @@ def items_count(requset):
          message = ("دلوقتي ليك شحن مجاني")
       else :
             message = ("شحن مجاني لاي اوردر فوق ال 1000")
+      
       return {'items_count':a,'offer':message}
    else:
        device = requset.COOKIES['device']
+       CartItem.objects.get_or_create(device=device)
        a = CartItem.objects.filter(device=device).count()
        message = ("شحن مجاني لاي اوردر فوق ال 1000")
        cart_items = CartItem.objects.filter(device=device)
@@ -30,4 +32,5 @@ def items_count(requset):
        else :
             message = ("شحن مجاني لاي اوردر فوق ال 1000")
        return {'items_count':a,'offer':message}
+    
 
