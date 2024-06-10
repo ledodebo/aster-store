@@ -100,29 +100,31 @@
 	<!--================End Product Description Area =================-->
 
 	<!--================ Start related Product area =================-->  
-	{% for i in rl %}	
+	
 	<section class="related-product-area section-margin--small mt-0">
 		<div class="container">
 			<div class="section-intro pb-60px">
         <p>Popular Item in the market</p>
-        <h2>Top <span class="section-intro__style">Product</span></h2>
+        <h2>related <span class="section-intro__style">Product</span></h2>
       </div>
 			<div class="row mt-30">
+      {% for i in rl %}	
         <div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
           <div class="single-search-product-wrapper">
             <div class="single-search-product d-flex">
-              <a href="#"><img src="{{i.image.url}}"alt=""></a>
+              <a href="#"><img src="{{i.product.image.url}}"alt=""></a>
               <div class="desc">
-                  <a href="#" id="name" class="title">{{i.name}}</a>
+                  <a href="#" id="name" class="title">{{i.product.name}}</a>
                   <div class="price">{{i.discount}}EGP</div>
               </div>
             </div>
           </div>
         </div>
+        {% endfor %}
       </div>
 		</div>
 	</section>
-	{% endfor %}
+	
 	<!--================ end related Product area =================-->  	
   <!--================ Start footer Area  =================-->	
 	 {% include "parts/footer.html" %}
