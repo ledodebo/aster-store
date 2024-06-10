@@ -212,7 +212,7 @@ def remove_iteam(request):
          
     else:
          device = request.COOKIES['device']
-         cart_item, created = CartItem.objects.get_or_create(product=Product, device=device)
+         cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, device=device)
          if cart_item.quantity == 1:
             cart_item.delete()
             return JsonResponse ( {'items_count':cart_item.quantity})
@@ -235,7 +235,7 @@ def add_iteam(request):
         device = request.COOKIES['device']
         id = request.GET.get("id")
         Product = ProductVariation.objects.get(id=id)
-        cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, user=request.user)
+        cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, device=device)
         cart_item.quantity += 1 
         cart_item.save()
         return JsonResponse ( {'ittems_count':cart_item.quantity})
