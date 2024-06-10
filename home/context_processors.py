@@ -1,5 +1,11 @@
 
 from .models import CartItem,ProductVariation
+from django.shortcuts import render ,redirect
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.shortcuts import render, HttpResponse
+from django.http import HttpResponseRedirect
 def items_count(requset):
    if requset.user.is_authenticated:
       a = CartItem.objects.filter(user=requset.user).count()
@@ -18,7 +24,6 @@ def items_count(requset):
       return {'items_count':a,'offer':message}
    else:
        device = requset.COOKIES['device']
-       CartItem.objects.get_or_create(device=device)
        a = CartItem.objects.filter(device=device).count()
        message = ("شحن مجاني لاي اوردر فوق ال 1000")
        cart_items = CartItem.objects.filter(device=device)
