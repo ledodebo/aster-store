@@ -103,7 +103,7 @@ def producct(requst,pk):
     pv = ProductVariation.objects.filter(product=prodcu)
     ch = ProductVariation.objects.filter(product=prodcu,ava=True)
     a = (ts.genders)
-    ge=ProductVariation.objects.filter(genders=a).exclude(id=pk)[:6]
+    ge=ProductVariation.objects.filter(genders=a,ava=True).exclude(id=pk)[:6]
     original_price = ts.price
     discounted_price = ts.discount
     def calculate_discount_percentage(original_price, discounted_price):
@@ -190,7 +190,7 @@ def add_to_cart(request):
    else :
          devive = request.COOKIES['device']
          costumer , create = customer.objects.get_or_create(device=devive)
-         cart_item, created = CartItem.objects.get_or_create(product=Product, device=devive)
+         cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, device=devive)
          cart_item.quantity += (int(qty))
          cart_item.save()
          count = items_count(request)
