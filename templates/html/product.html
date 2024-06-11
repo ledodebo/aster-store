@@ -54,13 +54,33 @@
 							<li><a class="active" href="#"><span>Category</span> : {{i.Category}}</a></li>
 							<li><a href="#"><span>Availibility</span> : In Stock</a></li>
 						</ul>
-						<div data-mdb-input-init class="form-outline"  style="width: 8rem;display: flex;margin-top: 5px;"> 
+            <style>
+              input {
+color: #693a86;
+/* The native appearance is hidden */
+appearance: none;
+-webkit-appearance: none;
+
+/* For a circular appearance we need a border-radius. */
+border-radius: 60%;
+
+/* The background will be the radio dot's color. */
+background: #693a86;
+
+/* The border will be the spacing between the dot and the outer circle */
+border: 3px solid #693a86;
+
+/* And by creating a box-shadow with no offset and no blur, we have an outer circle */
+box-shadow: 0 0 0 1px #693a86;
+}
+            </style>
+						<p>{{pk.descretion}}</p>
+            <div data-mdb-input-init class="form-outline"  class="radio" id="radio-2" name="group" style="width: 8rem;display: flex;margin-top: 5px;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;"> 
 							<label class="form-label" style="margin-top: 8px;text-align: center;font-size: 15px;" id="qty" for="form1">quantity:</label>
 							<div  style="height: 32px;" class="">
 								&nbsp; &nbsp; &nbsp; </div>
 							<input type="number" id="form1" value="1" class="form-control form-icon-trailing" />
 						</div>
-						<p>{{pk.descretion}}</p>
 						{% endfor %}
 						  {% for i in pv %}
 						  <div class="card" style="margin-top: 10px;">
@@ -70,7 +90,7 @@
 						  </div>
 						  {% endfor %}
 						<a class="btn" style="margin-top: 10px;margin-bottom: 10px;color: white;" id="add-to-cart" >اضف الي السلة</a>   
-						<a class="btn" href="{% url 'checkrn' pk.id %}" style="margin-top: 10px;margin-bottom: 10px;color: white;background-color:black;" id="add-to-cart" >اشتري دلوقتي</a>   	          
+						<a class="btn" href="{% url 'checkrn' pk.id %}" style="margin-top: 10px;margin-bottom: 10px;color: white;background-color:#7c11f0;" id="add-to-cart" >اشتري دلوقتي</a>   	          
 						</div>
 						<span  style="color: white;">{{pk.id}}</span>		  
 				</div>
@@ -193,10 +213,10 @@
                 },
                 dataType: 'json',
                 success: function(response) {
-                    thisButton.html("تم اضافة المنتج");
+                    thisButton.html("Item added");
                     itemCount.text(response.items_count);
                     Toastify({
-                        text: "تم اضافة المنتج",
+                        text: "Item Was Added",
                         duration: 2000,
                         newWindow: false,
                         close: true,
