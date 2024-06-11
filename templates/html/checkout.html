@@ -76,14 +76,14 @@
                         <div class="form-row">
                           <div class="form-group col-md-6">
                             <label for="inputCity">المنقطة/الحي</label>
-                            <input type="text"  class="form-control" id="inputCity">
+                            <input type="text" placeholder="المحافظة"  class="form-control" id="inputCity">
                           </div>
                           <div class="form-group col-md-2">
                             <label for="inputState">المحافظة</label><br>
-                            {% render_field form.zones placeholder="المحافظة" class="form-group" %}
+                            {% render_field form.zones placeholder="المحافظة" style="z-index:2;" class="form-group" %}
                           </div> 
                         </div>                         
-                     <button type="submit" class="button button-paypal">اتمام الطلب</button>
+                     <button type="submit" class="button button-paypal">Proceed to Paypal</button>
                       </form>
                         
                 </div>
@@ -106,7 +106,7 @@
                         <div class="payment_item">
                             <div class="radion_btn">
                                 <input type="radio" checked="checked" id="f-option5" name="selector">
-                                <label for="f-option5">دفع عند الاستلام</label>
+                                <label for="f-option5" style="z-index: 0;">دفع عند الاستلام</label>
                                 <div class="check"></div>
                             </div>
                             <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
@@ -115,8 +115,8 @@
                         
                         <div class="payment_item active">
                             <div class="radion_btn">
-                                <input type="radio" id="f-option6" name="selector">
-                                <label for="f-option6">Paypal  (coming soon <3)</label>
+                                <input type="radio" id="f-option6" name="selector" disabled >
+                                <label for="f-option6" style="z-index: 0;" disabled >Paypal  (coming soon <3)</label>
                                 <img src="img/product/card.jpg" alt="">
                                 <div class="check"></div>
                             </div>
