@@ -23,7 +23,7 @@ def items_count(requset):
       
       return {'items_count':a,'offer':message}
    else:
-       device = requset.COOKIES['device']
+       device = requset.COOKIES.get('device')
        a = CartItem.objects.filter(device=device).count()
        message = ("شحن مجاني لاي اوردر فوق ال 1000")
        cart_items = CartItem.objects.filter(device=device)
