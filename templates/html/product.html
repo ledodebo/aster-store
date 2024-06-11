@@ -31,20 +31,19 @@
 	
   <!--================Single Product Area =================-->
  
-	<div class="product_image_area">
+	<div class="product_image_area"  >
 		
 		<div class="container">
-			
-			<div class="row s_product_inner">
-				<div class="col-lg-6">
-					
-						<div class="single-prd-item">
+			<div class="row s_product_inner" >
+				<div class="col-lg-6" >
+					{% for i in ch %}
+						<div class="single-prd-item" >
 							<img class="img-fluid" src="{{pk.image.url}}" alt="">
 						</div>
 						</div> 
 				</div>
 				<div class="col-lg-5 offset-lg-1">
-					{% for i in ch %}
+					
 					<div class="s_product_text">
 						<h3 id="name" >{{pk.name}}</h3>
 						<h2 id="price" >{{i.discount}}EGP{{discount}}%-OFF</h2>
@@ -54,6 +53,7 @@
 							<li><a class="active" href="#"><span>Category</span> : {{i.Category}}</a></li>
 							<li><a href="#"><span>Availibility</span> : In Stock</a></li>
 						</ul>
+            {% endfor %}
             <style>
               input {
 color: #693a86;
@@ -81,22 +81,25 @@ box-shadow: 0 0 0 1px #693a86;
 								&nbsp; &nbsp; &nbsp; </div>
 							<input type="number" id="form1" value="1" class="form-control form-icon-trailing" />
 						</div>
-						{% endfor %}
+						
 						  {% for i in pv %}
 						  <div class="card" style="margin-top: 10px;">
 							<div class="card-body" style="border: 0.5px solid; border-color: #693a86;text-align: center;font-size: 15px;color: black;">
 							<input class="form-check-input" {{i.ava}} type="radio" name="type"  value="{{i.id}}" id=""><span style="color: black;"> size: </span> {{i.size}}<span style="color: black;"> type: </span> {{i.type}}
 							</div>
 						  </div>
+              <span style="display: none;" id="idd">{{i.id}}</span>
 						  {% endfor %}
 						<a class="btn" style="margin-top: 10px;margin-bottom: 10px;color: white;" id="add-to-cart" >اضف الي السلة</a>   
-						<a class="btn" href="{% url 'checkrn' pk.id %}" style="margin-top: 10px;margin-bottom: 10px;color: white;background-color:#7c11f0;" id="add-to-cart" >اشتري دلوقتي</a>   	          
+						<button class="btn" style="margin-top: 10px;margin-bottom: 10px;color: white;background-color:#7c11f0;" id="add-to-cart" onclick="pvi()" >اشتري دلوقتي</button>   	          
 						</div>
+            
 						<span  style="color: white;">{{pk.id}}</span>		  
 				</div>
 			</div>
 		</div>
 	</div>
+  
 	<!--================End Single Product Area =================-->
 	
 	<!--================Product Description Area =================-->
@@ -143,8 +146,15 @@ box-shadow: 0 0 0 1px #693a86;
         {% endfor %}
       </div>
 		</div>
+    
 	</section>
-	
+	<script>
+    function pvi() {
+    const id = $("#idd").text();
+    url = ( 'checkrn/'+id)
+    window.location.href = url;
+}
+  </script>
 	<!--================ end related Product area =================-->  	
   <!--================ Start footer Area  =================-->	
 	 {% include "parts/footer.html" %}
@@ -165,14 +175,14 @@ box-shadow: 0 0 0 1px #693a86;
     const pp = $('#price');
     const addToCartButton = $("#add-to-cart");
     const itemCount = $('#count');
-
+    
     radioButtons.forEach(radio => {
         radio.addEventListener('change', () => {
             const checkedOption = Array.from(radioButtons).find(radio => radio.checked);
             if (checkedOption) {
                 console.log(`Checked: ${checkedOption.value}`);
                 const id = checkedOption.value;
-
+                const idd = $("#idd").text(id)
                 $.ajax({
                     url: "{% url 'getprice' %}",
                     data: {
@@ -204,7 +214,7 @@ box-shadow: 0 0 0 1px #693a86;
             console.log("id", id);
             console.log("qty", qty);
             console.log("count", itemCount);
-
+          
             $.ajax({
                 url: "add/",
                 data: {
