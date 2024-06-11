@@ -265,7 +265,7 @@ from django.http import JsonResponse
 def innc(requset):
     if requset.GET.get("phone"):
         number = (int(requset.GET.get("phone")))
-        inc.objects.get_or_create(phone=number, user=requset.user)
+        inc.objects.create(phone=number)
         return JsonResponse ( {'items_count':number})
     
     else:
