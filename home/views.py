@@ -229,7 +229,7 @@ def add_iteam(request):
         cart_item, created = CartItem.objects.get_or_create(ProductVariation=Product, user=request.user)
         cart_item.quantity += 1 
         cart_item.save()
-        return JsonResponse ( {'items_count':cart_item.quantity})
+        return JsonResponse ( {'ittems_count':cart_item.quantity})
     
     else:
         device = request.COOKIES['device']
